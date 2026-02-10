@@ -3,11 +3,20 @@ import { LinkSchema } from '#shared/schemas/link'
 const slugValidator = LinkSchema.shape.slug
 
 export default eventHandler(async (event) => {
-  const R2 = requireR2Bucket(event.context.cloudflare.env)
-  const key = getRouterParam(event, 'key')
+  const { cloudflare } = event.context
+  const { R2 } = cloudflare.env
+  const rawKey = getRouterParam(event, 'key')
 
-  if (!key) {
+  if (!rawKey) {
     throw createError({ status: 400, statusText: 'Key is required' })
+  }
+
+  let key: string
+  try {
+    key = decodeURIComponent(rawKey)
+  }
+  catch {
+    throw createError({ status: 400, statusText: 'Invalid path encoding' })
   }
 
   // Only allow access to images/ path
