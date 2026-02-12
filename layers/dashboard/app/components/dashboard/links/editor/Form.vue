@@ -74,12 +74,12 @@ const form = useForm({
         comment: emptyToNull(value.comment),
         expiration: value.expiration
           ? date2unix(value.expiration, 'end')
-          : null,
-        google: emptyToNull(value.google || undefined),
-        apple: emptyToNull(value.apple || undefined),
-        title: emptyToNull(value.title || undefined),
-        description: emptyToNull(value.description || undefined),
-        image: emptyToNull(value.image || undefined),
+          : undefined,
+        google: emptyToNull(value.google),
+        apple: emptyToNull(value.apple),
+        title: emptyToNull(value.title),
+        description: emptyToNull(value.description),
+        image: emptyToNull(value.image),
         cloaking: value.cloaking,
         redirectWithQuery: value.redirectWithQuery,
         password: emptyToNull(getPasswordSubmitValue(value.password)),
