@@ -30,6 +30,17 @@ const parsedData = ref<ImportData | null>(null)
 const parseError = ref<string | null>(null)
 const validationErrors = ref<string[]>([])
 
+const importTemplateData = {
+  version: '1.0',
+  links: [
+    {
+      url: 'https://example.com',
+      slug: 'example',
+      comment: '',
+    },
+  ],
+} satisfies Pick<ImportData, 'version' | 'links'>
+
 const isImporting = ref(false)
 const importProgress = ref(0)
 const importResult = ref<ImportResult | null>(null)
@@ -84,6 +95,10 @@ async function handleFile(file: File) {
   catch {
     parseError.value = t('migrate.import.errors.parse_error')
   }
+}
+
+function downloadTemplate() {
+  saveAsJson(importTemplateData, createExportFilename('sink-import-template', 'json'))
 }
 
 async function handleImport() {
@@ -223,6 +238,120 @@ function reset() {
       <CardDescription>{{ $t('migrate.import.description') }}</CardDescription>
     </CardHeader>
     <CardContent class="space-y-4">
+      <div class="space-y-4 rounded-lg border bg-muted/30 p-4">
+        <div
+          class="
+            flex flex-col gap-3
+            sm:flex-row sm:items-center sm:justify-between
+          "
+        >
+          <div>
+            <p class="font-medium">
+              {{ $t('migrate.import.template.title') }}
+            </p>
+            <p class="text-sm text-muted-foreground">
+              {{ $t('migrate.import.template.description') }}
+            </p>
+          </div>
+          <Button variant="outline" size="sm" @click="downloadTemplate">
+            <Download class="mr-2 h-4 w-4" />
+            {{ $t('migrate.import.template.button') }}
+          </Button>
+        </div>
+
+        <details class="rounded-md border bg-background/70 p-3">
+          <summary class="cursor-pointer text-sm font-medium">
+            {{ $t('migrate.import.template.fields_title') }}
+          </summary>
+          <p class="mt-2 text-sm text-muted-foreground">
+            {{ $t('migrate.import.template.fields_description') }}
+          </p>
+          <div
+            class="
+              mt-4 grid gap-4
+              md:grid-cols-2
+            "
+          >
+            <div class="space-y-3">
+              <p
+                class="
+                  text-xs font-semibold tracking-wide text-muted-foreground
+                  uppercase
+                "
+              >
+                {{ $t('migrate.import.template.required_title') }}
+              </p>
+              <div>
+                <p class="font-medium">
+                  version
+                </p>
+                <p class="text-sm text-muted-foreground">
+                  {{ $t('migrate.import.template.version') }}
+                </p>
+              </div>
+              <div>
+                <p class="font-medium">
+                  links[].url
+                </p>
+                <p class="text-sm text-muted-foreground">
+                  {{ $t('migrate.import.template.url') }}
+                </p>
+              </div>
+              <div>
+                <p class="font-medium">
+                  links[].slug
+                </p>
+                <p class="text-sm text-muted-foreground">
+                  {{ $t('migrate.import.template.slug') }}
+                </p>
+              </div>
+            </div>
+            <div class="space-y-3">
+              <p
+                class="
+                  text-xs font-semibold tracking-wide text-muted-foreground
+                  uppercase
+                "
+              >
+                {{ $t('migrate.import.template.optional_title') }}
+              </p>
+              <div>
+                <p class="font-medium">
+                  links[].comment
+                </p>
+                <p class="text-sm text-muted-foreground">
+                  {{ $t('migrate.import.template.comment') }}
+                </p>
+              </div>
+              <div>
+                <p class="font-medium">
+                  links[].title
+                </p>
+                <p class="text-sm text-muted-foreground">
+                  {{ $t('migrate.import.template.title_field') }}
+                </p>
+              </div>
+              <div>
+                <p class="font-medium">
+                  links[].description
+                </p>
+                <p class="text-sm text-muted-foreground">
+                  {{ $t('migrate.import.template.description_field') }}
+                </p>
+              </div>
+              <div>
+                <p class="font-medium">
+                  links[].expiration / cloaking / redirectWithQuery / password / geo
+                </p>
+                <p class="text-sm text-muted-foreground">
+                  {{ $t('migrate.import.template.optional_fields') }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+
       <div v-if="!parsedData && !parseError && !importResult">
         <Input
           ref="fileInput"
