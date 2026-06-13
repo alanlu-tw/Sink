@@ -37,6 +37,16 @@ function getPasswordSubmitValue(password: string): string | undefined {
   return password
 }
 
+function getUnsafeSubmitValue(unsafe: boolean): boolean | undefined {
+  if (unsafe)
+    return true
+
+  if (props.isEdit && props.link.unsafe !== undefined)
+    return false
+
+  return undefined
+}
+
 const form = useForm({
   defaultValues: {
     url: props.link.url ?? '',
@@ -82,8 +92,8 @@ const form = useForm({
         image: emptyToNull(value.image),
         cloaking: value.cloaking,
         redirectWithQuery: value.redirectWithQuery,
-        password: emptyToNull(getPasswordSubmitValue(value.password)),
-        unsafe: emptyToNull(props.isEdit ? value.unsafe : value.unsafe || undefined),
+        password: getPasswordSubmitValue(value.password),
+        unsafe: getUnsafeSubmitValue(value.unsafe),
         geo: emptyToNull(Object.keys(geoRecord).length > 0 ? geoRecord : undefined),
       }
       const { link: newLink } = await useAPI<{ link: Link }>(
